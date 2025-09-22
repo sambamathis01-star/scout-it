@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TravelCard } from "@/components/TravelCard";
-import { Plus, Search, Plane, Users, CheckCircle } from "lucide-react";
+import { EquipmentTableView } from "@/components/EquipmentTableView";
+import { EquipmentCalendarView } from "@/components/EquipmentCalendarView";
+import { Plus, Search, Plane, Users, CheckCircle, Monitor, Calendar, Table } from "lucide-react";
 import { TravelRequest } from "@/types/travel";
 import { useNavigate } from "react-router-dom";
 
@@ -170,65 +172,96 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Rechercher par nom, destination ou objet..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-
-        {/* Travel List with Tabs */}
-        <Tabs defaultValue="all" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="all">Tous</TabsTrigger>
-            <TabsTrigger value="pending">En attente</TabsTrigger>
-            <TabsTrigger value="approved">Validés</TabsTrigger>
-            <TabsTrigger value="in_progress">En cours</TabsTrigger>
-            <TabsTrigger value="completed">Terminés</TabsTrigger>
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="travels" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="travels" className="flex items-center gap-2">
+              <Plane className="h-4 w-4" />
+              Demandes de voyage
+            </TabsTrigger>
+            <TabsTrigger value="equipment-table" className="flex items-center gap-2">
+              <Table className="h-4 w-4" />
+              Équipements - Tableau
+            </TabsTrigger>
+            <TabsTrigger value="equipment-calendar" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Équipements - Calendrier
+            </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="all" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filterTravels().map((travel) => (
-                <TravelCard key={travel.id} travel={travel} />
-              ))}
+
+          {/* Travel Requests Tab */}
+          <TabsContent value="travels" className="space-y-4">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Rechercher par nom, destination ou objet..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
             </div>
+
+            {/* Travel Status Tabs */}
+            <Tabs defaultValue="all" className="space-y-4">
+              <TabsList>
+                <TabsTrigger value="all">Tous</TabsTrigger>
+                <TabsTrigger value="pending">En attente</TabsTrigger>
+                <TabsTrigger value="approved">Validés</TabsTrigger>
+                <TabsTrigger value="in_progress">En cours</TabsTrigger>
+                <TabsTrigger value="completed">Terminés</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="all" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filterTravels().map((travel) => (
+                    <TravelCard key={travel.id} travel={travel} />
+                  ))}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="pending" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filterTravels('pending').map((travel) => (
+                    <TravelCard key={travel.id} travel={travel} />
+                  ))}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="approved" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filterTravels('approved').map((travel) => (
+                    <TravelCard key={travel.id} travel={travel} />
+                  ))}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="in_progress" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filterTravels('in_progress').map((travel) => (
+                    <TravelCard key={travel.id} travel={travel} />
+                  ))}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="completed" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filterTravels('completed').map((travel) => (
+                    <TravelCard key={travel.id} travel={travel} />
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
           </TabsContent>
-          
-          <TabsContent value="pending" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filterTravels('pending').map((travel) => (
-                <TravelCard key={travel.id} travel={travel} />
-              ))}
-            </div>
+
+          {/* Equipment Table View Tab */}
+          <TabsContent value="equipment-table">
+            <EquipmentTableView />
           </TabsContent>
-          
-          <TabsContent value="approved" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filterTravels('approved').map((travel) => (
-                <TravelCard key={travel.id} travel={travel} />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="in_progress" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filterTravels('in_progress').map((travel) => (
-                <TravelCard key={travel.id} travel={travel} />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="completed" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filterTravels('completed').map((travel) => (
-                <TravelCard key={travel.id} travel={travel} />
-              ))}
-            </div>
+
+          {/* Equipment Calendar View Tab */}
+          <TabsContent value="equipment-calendar">
+            <EquipmentCalendarView />
           </TabsContent>
         </Tabs>
       </div>
